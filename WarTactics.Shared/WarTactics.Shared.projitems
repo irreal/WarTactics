@@ -9,12 +9,20 @@
     <Import_RootNamespace>WarTactics.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Game1.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Content\" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\BoardField.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\BoardFieldType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\HexMap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\Hexagon.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Entities\HexagonMapEntity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GameScene.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\HexagonalHelperLibrary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\Point.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WtGame.cs" />
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
   </ItemGroup>
- </Project>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
+  </ItemGroup>
+</Project>

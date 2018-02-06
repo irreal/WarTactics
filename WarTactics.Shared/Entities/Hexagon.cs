@@ -7,18 +7,31 @@ namespace WarTactics.Shared.Entities
 {
     public class Hexagon : Entity
     {
-        private Color defaultColor = Color.CornflowerBlue;
+        private Color defaultColor = Color.White;
         private Color? highlightColor;
         private Sprite sprite;
-        public Hexagon(Texture2D hexagonTexture, string name) : base(name)
+        private Texture2D[] textures;
+        private int type;
+        public Hexagon(Texture2D[] hexagonTexture, int type, string name) : base(name)
         {
-            this.sprite = new Sprite(hexagonTexture);
+            this.sprite = new Sprite(hexagonTexture[type]);
+            this.type = type;
+            this.textures = hexagonTexture;
             sprite.color = defaultColor;
-            sprite.material = new Material(BlendState.AlphaBlend);
 
             this.addComponent(sprite);
         }
 
+        public void SetType (int type)
+        {
+            if (this.type != type)
+            {
+            this.type = type;
+                this.removeComponent(this.sprite);
+                this.sprite = new Sprite(this.textures[type]);
+                this.addComponent(sprite);
+            }
+        }
         public Color? HighlightColor
         {
             get => this.highlightColor;

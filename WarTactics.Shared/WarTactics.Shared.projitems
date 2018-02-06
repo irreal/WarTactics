@@ -16,6 +16,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Entities\HexagonMapEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\HexagonalHelperLibrary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\HexCoordsEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Helpers\Point.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WtGame.cs" />
   </ItemGroup>

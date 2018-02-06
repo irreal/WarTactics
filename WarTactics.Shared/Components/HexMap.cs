@@ -1,8 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Nez;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using WarTactics.Shared.Helpers;
 
 namespace WarTactics.Shared.Components

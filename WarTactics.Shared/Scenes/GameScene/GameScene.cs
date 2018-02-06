@@ -5,6 +5,8 @@
     using Nez;
 
     using WarTactics.Shared.Components;
+    using WarTactics.Shared.Components.Game;
+    using WarTactics.Shared.Components.Units;
     using WarTactics.Shared.Entities;
     using WarTactics.Shared.Helpers;
 
@@ -13,15 +15,38 @@
         public override void initialize()
         {
             base.initialize();
-            var mapEntity = new BoardEntity();
-            mapEntity.HoverEntered += this.MapHoverEntered;
-            mapEntity.HoverLeft += this.MapHoverLeft;
-            mapEntity.HexagonSelected += this.MapEntityHexagonSelected;
-            mapEntity.setPosition(new Vector2(150, 150));
-            this.addEntity(mapEntity);
+            var boardEntity = new BoardEntity();
+            boardEntity.HoverEntered += this.BoardHoverEntered;
+            boardEntity.HoverLeft += this.BoardHoverLeft;
+            boardEntity.HexagonSelected += this.BoardHexagonSelected;
+            boardEntity.setPosition(new Vector2(150, 150));
+            this.addEntity(boardEntity);
 
             var mapInfo = this.GetMap();
-            mapEntity.SetupBoard(mapInfo);
+
+            var fields = GetFieldsFromMap(mapInfo);
+
+            boardEntity.SetupBoard(fields);
+
+            var gr = this.addEntity(new GameEntity()).getComponent<GameRound>();
+            int count = 0;
+            foreach (var player in gr.Players)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    count++;
+                    BoardField field = null;
+
+                    while (field == null || field.Unit != null)
+                    {
+                        field = fields[Random.nextInt(mapInfo.GetLength(0)), Random.nextInt(mapInfo.GetLength(1))];
+                    }
+
+                    var footman = new Footman { Player = player };
+                    field.SetUnit(footman);
+                    this.addEntity(new UnitEntity(footman, $"footman{count}")).setParent(boardEntity);
+                }
+            }
 
             this.addRenderer(new RenderLayerRenderer(0, 0));
             this.addRenderer(new ScreenSpaceRenderer(1, 1));
@@ -30,15 +55,36 @@
             this.clearColor = Color.Wheat;
         }
 
-        private void MapEntityHexagonSelected(object sender, HexCoordsEventArgs e)
+        public override void update()
+        {
+            this.getOrCreateSceneComponent<MouseCameraControls>().Update();
+            this.getOrCreateSceneComponent<KeyboardCameraControls>().Update();
+            base.update();
+        }
+
+        private static BoardField[,] GetFieldsFromMap(BoardFieldType[,] mapInfo)
+        {
+            var fields = new BoardField[mapInfo.GetLength(0), mapInfo.GetLength(1)];
+            for (int col = 0; col < mapInfo.GetLength(0); col++)
+            {
+                for (int row = 0; row < mapInfo.GetLength(1); row++)
+                {
+                    fields[col, row] = new BoardField(col, row, mapInfo[col, row]);
+                }
+            }
+
+            return fields;
+        }
+
+        private void BoardHexagonSelected(object sender, HexCoordsEventArgs e)
         {
         }
 
-        private void MapHoverLeft(object sender, HexCoordsEventArgs e)
+        private void BoardHoverLeft(object sender, HexCoordsEventArgs e)
         {
         }
 
-        private void MapHoverEntered(object sender, HexCoordsEventArgs e)
+        private void BoardHoverEntered(object sender, HexCoordsEventArgs e)
         {
         }
 

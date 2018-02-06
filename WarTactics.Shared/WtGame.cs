@@ -6,6 +6,7 @@
     using Nez;
     using Nez.Textures;
 
+    using WarTactics.Shared.Scenes.GameScene;
     using WarTactics.Shared.Scenes.MainMenu;
     using WarTactics.Shared.Scenes.MapEditor;
 
@@ -14,14 +15,14 @@
     /// </summary>
     public class WtGame : Core
     {
-        public static Texture2D HexagonesTexture;
-
-        public static Subtexture[] HexagonSubtextures;
-
         public WtGame()
         {
             Core.defaultSamplerState = SamplerState.LinearClamp;
         }
+
+        public static Texture2D HexagonesTexture { get; private set; }
+
+        public static Subtexture[] HexagonSubtextures { get; private set; }
 
         public static void LoadMapEditor()
         {
@@ -31,6 +32,11 @@
         public static void LoadMainMenu()
         {
             WtGame.scene = new MainMenuScene();
+        }
+
+        public static void LoadGame()
+        {
+            WtGame.scene = new GameScene();
         }
 
         protected override void LoadContent()

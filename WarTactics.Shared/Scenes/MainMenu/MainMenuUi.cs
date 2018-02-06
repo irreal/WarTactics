@@ -28,6 +28,12 @@
             button.add(new Label("Map Editor"));
             button.onClicked += b => { WtGame.LoadMapEditor(); };
             table.add(button).setMinWidth(170).setMinHeight(70);
+
+            table.row();
+            button = new Button(ButtonStyle.create(Color.Black, Color.DarkGray, Color.Green));
+            button.add(new Label("Play the game!"));
+            button.onClicked += b => { WtGame.LoadGame(); };
+            table.add(button).setMinWidth(170).setMinHeight(70);
         }
     }
 }

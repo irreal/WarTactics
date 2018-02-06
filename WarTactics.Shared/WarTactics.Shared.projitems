@@ -11,6 +11,8 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Components\BoardField.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\BoardFieldType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\KeyboardCameraControls.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\MouseCameraControls.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Game\GameRound.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Board.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Game\Player.cs" />

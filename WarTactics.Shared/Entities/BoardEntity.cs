@@ -6,6 +6,7 @@
     using Nez;
 
     using WarTactics.Shared.Components;
+    using WarTactics.Shared.Components.Units;
     using WarTactics.Shared.Helpers;
 
     public class BoardEntity : Entity
@@ -85,7 +86,7 @@
             }
         }
 
-        public void SetupBoard(BoardFieldType[,] mapInfo)
+        public void SetupBoard(BoardField[,] mapInfo)
         {
             this.board = new Board(mapInfo);
             this.removeComponent<Board>();

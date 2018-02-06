@@ -11,6 +11,8 @@
             this.Speed = speed;
             this.Attack = attack;
             this.Armor = armor;
+            this.MaxHealth = health;
+            this.InitialMaxHealth = health;
             this.Health = health;
         }
 
@@ -22,6 +24,24 @@
 
         public double Health { get; set; }
 
+        public double MaxHealth { get; set; }
+
+        public double InitialMaxHealth { get; set; }
+
         public Player Player { get; set; }
+
+        public bool CanMove { get; set; }
+
+        public bool CanAttack { get; set; }
+
+        public virtual void TurnEnded(Player currentPlayer)
+        {
+        }
+
+        public virtual void TurnStarted(Player currentPlayer)
+        {
+            this.CanMove = true;
+            this.CanAttack = true;
+        }
     }
 }

@@ -21,11 +21,12 @@
             this.addEntity(this.mapEntity);
 
             var mapInfo = this.GetMap();
-            this.mapEntity.SetupBoard(mapInfo);
+            var fields = GetFieldsFromMap(mapInfo);
+            this.mapEntity.SetupBoard(fields);
 
             this.addRenderer(new RenderLayerRenderer(0, 0));
-            var spRenderer = new ScreenSpaceRenderer(1, 1);
-            this.addRenderer(spRenderer);
+            var screenSpaceRenderer = new ScreenSpaceRenderer(1, 1);
+            this.addRenderer(screenSpaceRenderer);
 
             this.createEntity("UI").addComponent<MapEditorUi>().renderLayer = 1;
 
@@ -52,58 +53,23 @@
 
         public override void update()
         {
-            Vector2 cameraMove = Vector2.Zero;
-            if (Input.mousePosition.X < 10)
-            {
-                cameraMove.X = -5f;
-            }
-
-            if (Input.mousePosition.X > 1270)
-            {
-                cameraMove.X = 5f;
-            }
-
-            if (Input.mousePosition.Y < 10)
-            {
-                cameraMove.Y = -5f;
-            }
-
-            if (Input.mousePosition.Y > 710)
-            {
-                cameraMove.Y = 5f;
-            }
-
-            if (Input.mouseWheelDelta > 0)
-            {
-                this.camera.zoom += 0.1f;
-            }
-            else if (Input.mouseWheelDelta < 0)
-            {
-                this.camera.zoom -= 0.1f;
-            }
-
-            if (Input.isKeyDown(Microsoft.Xna.Framework.Input.Keys.A))
-            {
-                cameraMove.X = -5f;
-            }
-
-            if (Input.isKeyDown(Microsoft.Xna.Framework.Input.Keys.D))
-            {
-                cameraMove.X = 5f;
-            }
-
-            if (Input.isKeyDown(Microsoft.Xna.Framework.Input.Keys.W))
-            {
-                cameraMove.Y = -5f;
-            }
-
-            if (Input.isKeyDown(Microsoft.Xna.Framework.Input.Keys.S))
-            {
-                cameraMove.Y = 5f;
-            }
-
-            this.camera.position += cameraMove;
+            this.getOrCreateSceneComponent<MouseCameraControls>().Update();
+            this.getOrCreateSceneComponent<KeyboardCameraControls>().Update();
             base.update();
+        }
+
+        private static BoardField[,] GetFieldsFromMap(BoardFieldType[,] mapInfo)
+        {
+            var fields = new BoardField[mapInfo.GetLength(0), mapInfo.GetLength(1)];
+            for (int col = 0; col < mapInfo.GetLength(0); col++)
+            {
+                for (int row = 0; row < mapInfo.GetLength(1); row++)
+                {
+                    fields[col, row] = new BoardField(col, row, mapInfo[col, row]);
+                }
+            }
+
+            return fields;
         }
 
         private void MapEntityHexagonSelected(object sender, Helpers.HexCoordsEventArgs e)

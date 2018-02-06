@@ -12,25 +12,21 @@
 
     public class Board : Component
     {
-        private readonly Layout hexLayout = new Layout(Layout.flat, new PointD(31, 31), new PointD(0, 0));
         private readonly BoardField[,] fields;
 
-        public Board(BoardFieldType[,] mapInfo)
+        public Board(BoardField[,] boardFields)
         {
-            this.fields = new BoardField[mapInfo.GetLength(0), mapInfo.GetLength(1)];
-            this.Size = new IntPoint(mapInfo.GetLength(0), mapInfo.GetLength(1));
-            for (int i = 0; i < mapInfo.GetLength(0); i++)
-            {
-                for (int u = 0; u < mapInfo.GetLength(1); u++)
-                {
-                    this.fields[i, u] = new BoardField(i, u, mapInfo[i, u]);
-                }
-            }
+            this.fields = boardFields;
+            this.Size = new IntPoint(boardFields.GetLength(0), boardFields.GetLength(1));
         }
 
         public BoardField[,] Fields => this.fields;
 
+        public IEnumerable<Unit> Units => this.BoardFields().Where(bf => bf.Unit != null).Select(bf => bf.Unit);
+
         public IntPoint Size { get; }
+
+        public Layout HexLayout { get; } = new Layout(Layout.flat, new PointD(31, 31), new PointD(0, 0));
 
         public BoardField FieldFromUnit(Unit unit)
         {
@@ -39,12 +35,12 @@
 
         public Vector2 HexPosition(int col, int row)
         {
-            return Layout.HexToPixel(this.hexLayout, this.fields[col, row].Hex);
+            return Layout.HexToPixel(this.HexLayout, this.fields[col, row].Hex);
         }
 
         public IntPoint IntPointFromPosition(Vector2 position)
         {
-            return OffsetCoord.QoffsetFromCube(OffsetCoord.EVEN, FractionalHex.HexRound(Layout.PixelToHex(this.hexLayout, position)));
+            return OffsetCoord.QoffsetFromCube(OffsetCoord.EVEN, FractionalHex.HexRound(Layout.PixelToHex(this.HexLayout, position)));
         }
 
         private IEnumerable<BoardField> BoardFields()

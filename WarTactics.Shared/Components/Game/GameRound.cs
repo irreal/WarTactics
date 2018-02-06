@@ -12,7 +12,7 @@
 
         public List<Player> Players { get; } = new List<Player>();
 
-        public Player CurrentPlayer { get; private set; }
+        public Player CurrentPlayer => currentPlayerIndex >= 0 ? this.Players[this.currentPlayerIndex] : null;
 
         public bool HasStarted { get; private set; }
 
@@ -31,7 +31,12 @@
             }
 
             this.HasStarted = true;
-            this.CurrentPlayer = this.Players[0];
+            this.currentPlayerIndex = 0;
+            foreach (var field in this.board.BoardFields())
+            {
+                field.TurnStarted();
+                field.Unit?.TurnStarted();
+            }
         }
 
         public override void onAddedToEntity()
@@ -44,24 +49,24 @@
         {
             foreach (var unit in this.board.Units)
             {
-                unit.TurnEnded(this.CurrentPlayer);
+                unit.TurnEnded();
             }
 
             foreach (var field in this.board.Fields)
             {
-                field.TurnEnded(this.CurrentPlayer);
+                field.TurnEnded();
             }
 
             this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.Players.Count;
 
             foreach (var unit in this.board.Units)
             {
-                unit.TurnStarted(this.CurrentPlayer);
+                unit.TurnStarted();
             }
 
             foreach (var field in this.board.Fields)
             {
-                field.TurnStarted(this.CurrentPlayer);
+                field.TurnStarted();
             }
         }
     }

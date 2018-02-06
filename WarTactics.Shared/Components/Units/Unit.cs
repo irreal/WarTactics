@@ -6,9 +6,10 @@
 
     public abstract class Unit : Component
     {
-        protected Unit(int speed, double attack, double armor, double health)
+        protected Unit(int speed, int attackRange, double attack, double armor, double health)
         {
             this.Speed = speed;
+            this.AttackRange = attackRange;
             this.Attack = attack;
             this.Armor = armor;
             this.MaxHealth = health;
@@ -17,6 +18,8 @@
         }
 
         public int Speed { get; set; }
+
+        public int AttackRange { get; set; }
 
         public double Attack { get; set; }
 
@@ -34,11 +37,11 @@
 
         public bool CanAttack { get; set; }
 
-        public virtual void TurnEnded(Player currentPlayer)
+        public virtual void TurnEnded()
         {
         }
 
-        public virtual void TurnStarted(Player currentPlayer)
+        public virtual void TurnStarted()
         {
             this.CanMove = true;
             this.CanAttack = true;

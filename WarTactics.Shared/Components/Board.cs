@@ -33,6 +33,11 @@
             return this.BoardFields().FirstOrDefault(bf => bf.Unit == unit);
         }
 
+        public bool CoordInMap(IntPoint coord)
+        {
+            return coord.X >= 0 && coord.X < this.Size.X && coord.Y >= 0 && coord.Y < this.Size.Y;
+        }
+
         public Vector2 HexPosition(int col, int row)
         {
             return Layout.HexToPixel(this.HexLayout, this.fields[col, row].Hex);
@@ -43,7 +48,7 @@
             return OffsetCoord.QoffsetFromCube(OffsetCoord.EVEN, FractionalHex.HexRound(Layout.PixelToHex(this.HexLayout, position)));
         }
 
-        private IEnumerable<BoardField> BoardFields()
+        public IEnumerable<BoardField> BoardFields()
         {
             for (int col = 0; col < this.fields.GetLength(0); col++)
             {

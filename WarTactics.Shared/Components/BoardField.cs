@@ -29,11 +29,11 @@
             this.Unit = unit;
         }
 
-        public virtual void TurnEnded(Player currentPlayer)
+        public virtual void TurnEnded()
         {
         }
 
-        public virtual void TurnStarted(Player currentPlayer)
+        public virtual void TurnStarted()
         {
         }
     }

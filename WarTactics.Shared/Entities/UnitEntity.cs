@@ -33,7 +33,7 @@
             this.addComponent(this.unit);
             var texture = Core.content.Load<Texture2D>(TypeToContentPath[this.unit.GetType()]);
             var sprite = this.addComponent(new Sprite(texture));
-            this.scale = ((Vector2)this.board.HexLayout.size) / new Vector2(51, 51);
+            this.scale = (Vector2)this.board.HexLayout.size / new Vector2(51, 51);
             var field = this.board.FieldFromUnit(this.unit);
             this.position = this.board.HexPosition(field.Col, field.Row);
 

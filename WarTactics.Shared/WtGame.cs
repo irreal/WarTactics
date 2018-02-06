@@ -15,7 +15,7 @@
     /// </summary>
     public class WtGame : Core
     {
-        public WtGame()
+        public WtGame() : base(1280, 768)
         {
             Core.defaultSamplerState = SamplerState.LinearClamp;
         }

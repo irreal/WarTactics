@@ -51,7 +51,7 @@
             this.addRenderer(new RenderLayerRenderer(0, 0));
             this.addRenderer(new ScreenSpaceRenderer(1, 1));
 
-            // ToDo add game UI. this.createEntity("UI").addComponent<MapEditorUi>().renderLayer = 1;
+            this.createEntity("UI").addComponent<GameSceneUi>().renderLayer = 1;
             this.clearColor = Color.Wheat;
         }
 
@@ -82,10 +82,72 @@
 
         private void BoardHoverLeft(object sender, HexCoordsEventArgs e)
         {
+            var boardEntity = this.findEntity("Board") as BoardEntity;
+            if (boardEntity == null)
+            {
+                return;
+            }
+
+            foreach (var hexagon in boardEntity.HexagonList)
+            {
+                hexagon.HighlightColor = null;
+            }
         }
 
         private void BoardHoverEntered(object sender, HexCoordsEventArgs e)
         {
+            var board = this.findComponentOfType<Board>();
+            var boardEntity = this.findEntity("Board") as BoardEntity;
+            var gameRound = this.findComponentOfType<GameRound>();
+            if (board == null || boardEntity == null)
+            {
+                return;
+            }
+
+            var field = board.Fields[e.Coords.X, e.Coords.Y];
+            if (field.Unit != null && field.Unit.Player == gameRound.CurrentPlayer && field.Unit.CanMove)
+            {
+                var hex = boardEntity.HexAtCoords(e.Coords);
+                hex.HighlightColor = new Color(Color.White, 200);
+                var moveRange = Hex.Range(field.Hex, field.Unit.Speed);
+                foreach (var rangeHex in moveRange)
+                {
+                    var ofc = OffsetCoord.QoffsetFromCube(OffsetCoord.EVEN, rangeHex);
+                    if (!board.CoordInMap(ofc))
+                    {
+                        continue;
+                    }
+
+                    var targetField = board.Fields[ofc.col, ofc.row];
+                    if (targetField.Unit == null)
+                    {
+                        var targetHexagon = boardEntity.HexAtCoords(ofc);
+                        targetHexagon.HighlightColor = new Color(Color.White, 200);
+                    }
+                }
+            }
+
+            if (field.Unit != null && field.Unit.Player == gameRound.CurrentPlayer && field.Unit.CanAttack)
+            {
+                var hex = boardEntity.HexAtCoords(e.Coords);
+                hex.HighlightColor = new Color(Color.White, 200);
+                var attackRange = Hex.Range(field.Hex, field.Unit.AttackRange);
+                foreach (var rangeHex in attackRange)
+                {
+                    var ofc = OffsetCoord.QoffsetFromCube(OffsetCoord.EVEN, rangeHex);
+                    if (!board.CoordInMap(ofc))
+                    {
+                        continue;
+                    }
+
+                    var targetField = board.Fields[ofc.col, ofc.row];
+                    if (targetField.Unit != null && targetField.Unit.Player != gameRound.CurrentPlayer)
+                    {
+                        var targetHexagon = boardEntity.HexAtCoords(ofc);
+                        targetHexagon.HighlightColor = new Color(Color.Red, 150);
+                    }
+                }
+            }
         }
 
         private BoardFieldType[,] GetMap()

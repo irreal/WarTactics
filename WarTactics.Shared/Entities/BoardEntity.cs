@@ -65,6 +65,15 @@
             base.update();
         }
 
+        public void RefreshHover()
+        {
+            if (this.hoverHex.HasValue)
+            {
+                this.HoverLeft?.Invoke(this, new HexCoordsEventArgs(hoverHex.Value));
+                this.HoverEntered?.Invoke(this, new HexCoordsEventArgs(hoverHex.Value));
+            }
+        }
+
         public HexagonEntity HexAtCoords(IntPoint coords)
         {
             if (this.hexagons == null || coords.X < 0 || coords.X >= this.hexagons.GetLength(0) || coords.Y < 0 || coords.Y >= this.hexagons.GetLength(1))

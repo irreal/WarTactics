@@ -25,7 +25,7 @@
                 cameraMove.X = 5f;
             }
 
-            if (Input.mousePosition.Y < 100)
+            if (Input.mousePosition.Y < 10)
             {
                 cameraMove.Y = -5f;
             }

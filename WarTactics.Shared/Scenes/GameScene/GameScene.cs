@@ -68,6 +68,7 @@
             if (Input.isKeyPressed(Keys.Space))
             {
                 this.findComponentOfType<GameRound>().EndTurn();
+                (this.findEntity("Board") as BoardEntity)?.RefreshHover();
             }
 
             base.update();

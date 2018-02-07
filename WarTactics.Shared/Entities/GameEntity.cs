@@ -20,5 +20,10 @@
 
             this.addComponent(game);
         }
+
+        public override void onAddedToScene()
+        {
+            base.onAddedToScene();
+        }
     }
 }

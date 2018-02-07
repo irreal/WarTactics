@@ -1,5 +1,7 @@
 ﻿namespace WarTactics.Shared.Scenes.GameScene
 {
+    using System.Collections.Generic;
+
     using Microsoft.Xna.Framework;
 
     using Nez;
@@ -12,6 +14,8 @@
 
     public class GameScene : Scene
     {
+        private BoardField selectedField;
+
         public override void initialize()
         {
             base.initialize();
@@ -57,7 +61,7 @@
 
         public override void update()
         {
-            this.getOrCreateSceneComponent<MouseCameraControls>().Update();
+            // this.getOrCreateSceneComponent<MouseCameraControls>().Update();
             this.getOrCreateSceneComponent<KeyboardCameraControls>().Update();
             base.update();
         }
@@ -78,10 +82,88 @@
 
         private void BoardHexagonSelected(object sender, HexCoordsEventArgs e)
         {
+            var board = this.findComponentOfType<Board>();
+            var game = this.findComponentOfType<GameRound>();
+            var field = board.Fields[e.Coords.X, e.Coords.Y];
+
+            if (this.selectedField == null)
+            {
+                if (field.Unit != null && field.Unit.Player == game.CurrentPlayer
+                                       && (this.FieldsUnitCanAttack(field).Count > 0 || this.FieldsUnitCanMoveTo(field).Count > 0))
+                {
+                    this.selectedField = field;
+                }
+            }
+            else
+            {
+                if (field == this.selectedField)
+                {
+                    this.selectedField = null;
+                    this.BoardHoverLeft(this, e);
+                    this.BoardHoverEntered(this, e);
+                }
+                else
+                {
+                    if (field.Unit == null)
+                    {
+                        var moveFields = this.FieldsUnitCanMoveTo(this.selectedField);
+                        if (moveFields.Contains(field))
+                        {
+                            this.ExecuteMove(this.selectedField, field);
+                            this.selectedField = null;
+                            this.BoardHoverLeft(this, e);
+                            this.BoardHoverEntered(this, e);
+                        }
+                        else
+                        {
+                            // ToDo notify invalid move target
+                            this.selectedField = null;
+                            this.BoardHoverLeft(this, e);
+                            this.BoardHoverEntered(this, e);
+                            this.BoardHexagonSelected(this, e);
+                        }
+                    }
+                    else
+                    {
+                        var attackFields = this.FieldsUnitCanAttack(this.selectedField);
+                        if (attackFields.Contains(field))
+                        {
+                            this.ExecuteAttack(this.selectedField, field);
+                            this.selectedField = null;
+                            this.BoardHoverLeft(this, e);
+                            this.BoardHoverEntered(this, e);
+                        }
+                        else
+                        {
+                            // ToDo notify invalid attack target
+                            this.selectedField = null;
+                            this.BoardHoverLeft(this, e);
+                            this.BoardHoverEntered(this, e);
+                            this.BoardHexagonSelected(this, e);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ExecuteMove(BoardField sourceField, BoardField targetField)
+        {
+            var unit = sourceField.RemoveUnit();
+            targetField.TakeUnit(unit);
+        }
+
+        private void ExecuteAttack(BoardField sourceField, BoardField targetField)
+        {
+            sourceField.Unit.ExecuteAttackUnit(targetField.Unit);
         }
 
         private void BoardHoverLeft(object sender, HexCoordsEventArgs e)
         {
+            if (this.selectedField != null)
+            {
+                return;
+            }
+
             var boardEntity = this.findEntity("Board") as BoardEntity;
             if (boardEntity == null)
             {
@@ -96,6 +178,11 @@
 
         private void BoardHoverEntered(object sender, HexCoordsEventArgs e)
         {
+            if (this.selectedField != null)
+            {
+                return;
+            }
+
             var board = this.findComponentOfType<Board>();
             var boardEntity = this.findEntity("Board") as BoardEntity;
             var gameRound = this.findComponentOfType<GameRound>();
@@ -107,21 +194,14 @@
             var field = board.Fields[e.Coords.X, e.Coords.Y];
             if (field.Unit != null && field.Unit.Player == gameRound.CurrentPlayer && field.Unit.CanMove)
             {
-                var hex = boardEntity.HexAtCoords(e.Coords);
-                hex.HighlightColor = new Color(Color.White, 200);
-                var moveRange = Hex.Range(field.Hex, field.Unit.Speed);
-                foreach (var rangeHex in moveRange)
+                var moveFields = this.FieldsUnitCanMoveTo(field);
+                if (moveFields.Count > 0)
                 {
-                    var ofc = OffsetCoord.QoffsetFromCube(OffsetCoord.EVEN, rangeHex);
-                    if (!board.CoordInMap(ofc))
+                    var hex = boardEntity.HexAtCoords(e.Coords);
+                    hex.HighlightColor = new Color(Color.White, 200);
+                    foreach (var targetField in moveFields)
                     {
-                        continue;
-                    }
-
-                    var targetField = board.Fields[ofc.col, ofc.row];
-                    if (targetField.Unit == null)
-                    {
-                        var targetHexagon = boardEntity.HexAtCoords(ofc);
+                        var targetHexagon = boardEntity.HexAtCoords(targetField.Coords);
                         targetHexagon.HighlightColor = new Color(Color.White, 200);
                     }
                 }
@@ -129,25 +209,74 @@
 
             if (field.Unit != null && field.Unit.Player == gameRound.CurrentPlayer && field.Unit.CanAttack)
             {
-                var hex = boardEntity.HexAtCoords(e.Coords);
-                hex.HighlightColor = new Color(Color.White, 200);
-                var attackRange = Hex.Range(field.Hex, field.Unit.AttackRange);
-                foreach (var rangeHex in attackRange)
+                var attackFields = this.FieldsUnitCanAttack(field);
+                if (attackFields.Count > 0)
                 {
-                    var ofc = OffsetCoord.QoffsetFromCube(OffsetCoord.EVEN, rangeHex);
-                    if (!board.CoordInMap(ofc))
+                    var hex = boardEntity.HexAtCoords(e.Coords);
+                    hex.HighlightColor = new Color(Color.White, 200);
+                    foreach (var targetField in attackFields)
                     {
-                        continue;
-                    }
-
-                    var targetField = board.Fields[ofc.col, ofc.row];
-                    if (targetField.Unit != null && targetField.Unit.Player != gameRound.CurrentPlayer)
-                    {
-                        var targetHexagon = boardEntity.HexAtCoords(ofc);
+                        var targetHexagon = boardEntity.HexAtCoords(targetField.Coords);
                         targetHexagon.HighlightColor = new Color(Color.Red, 150);
                     }
                 }
             }
+        }
+
+        private List<BoardField> FieldsUnitCanAttack(BoardField sourceField)
+        {
+            var board = this.findComponentOfType<Board>();
+            List<BoardField> fields = new List<BoardField>();
+            if (sourceField.Unit == null || !sourceField.Unit.CanAttack)
+            {
+                return fields;
+            }
+
+            var attackRange = Hex.Range(sourceField.Hex, sourceField.Unit.AttackRange);
+            foreach (var rangeHex in attackRange)
+            {
+                var ofc = OffsetCoord.QoffsetFromCube(OffsetCoord.EVEN, rangeHex);
+                if (!board.CoordInMap(ofc))
+                {
+                    continue;
+                }
+
+                var targetField = board.Fields[ofc.col, ofc.row];
+                if (targetField.CanBeAttackedByUnit(sourceField.Unit) && sourceField.Unit.CanAttackField(targetField))
+                {
+                    fields.Add(targetField);
+                }
+            }
+
+            return fields;
+        }
+
+        private List<BoardField> FieldsUnitCanMoveTo(BoardField sourceField)
+        {
+            var board = this.findComponentOfType<Board>();
+            List<BoardField> fields = new List<BoardField>();
+            if (sourceField.Unit == null || !sourceField.Unit.CanMove)
+            {
+                return fields;
+            }
+
+            var moveRange = Hex.Range(sourceField.Hex, sourceField.Unit.Speed);
+            foreach (var rangeHex in moveRange)
+            {
+                var ofc = OffsetCoord.QoffsetFromCube(OffsetCoord.EVEN, rangeHex);
+                if (!board.CoordInMap(ofc))
+                {
+                    continue;
+                }
+
+                var targetField = board.Fields[ofc.col, ofc.row];
+                if (targetField.CanTakeUnit(sourceField.Unit) && sourceField.Unit.CanMoveToField(targetField))
+                {
+                    fields.Add(targetField);
+                }
+            }
+
+            return fields;
         }
 
         private BoardFieldType[,] GetMap()

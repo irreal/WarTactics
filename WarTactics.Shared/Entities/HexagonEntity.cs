@@ -42,5 +42,13 @@
                 this.sprite.setSubtexture(WtGame.HexagonSubtextures[(int)newType]);
             }
         }
+
+        public override void onAddedToScene()
+        {
+            var board = this.scene.findComponentOfType<Board>();
+            Vector2 hexagonSize = board.HexLayout.size;
+            this.scale = hexagonSize / new Vector2(31, 31);
+            base.onAddedToScene();
+        }
     }
 }

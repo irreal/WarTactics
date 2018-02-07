@@ -8,11 +8,11 @@
     {
         private Board board;
 
-        private int currentPlayerIndex;
+        private int currentPlayerIndex = -1;
 
         public List<Player> Players { get; } = new List<Player>();
 
-        public Player CurrentPlayer => currentPlayerIndex >= 0 ? this.Players[this.currentPlayerIndex] : null;
+        public Player CurrentPlayer => this.currentPlayerIndex >= 0 ? this.Players[this.currentPlayerIndex] : null;
 
         public bool HasStarted { get; private set; }
 

@@ -52,3 +52,10 @@
 #begin hexagonImagesMap.txt
 /copy:hexagonImagesMap.txt
 
+#begin MainFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:MainFont.spritefont
+

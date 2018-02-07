@@ -26,7 +26,7 @@
 
         public IntPoint Size { get; }
 
-        public Layout HexLayout { get; } = new Layout(Layout.flat, new PointD(31, 31), new PointD(0, 0));
+        public Layout HexLayout { get; } = new Layout(Layout.flat, new PointD(41, 41), new PointD(0, 0));
 
         public BoardField FieldFromUnit(Unit unit)
         {

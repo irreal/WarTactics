@@ -1,6 +1,7 @@
 ﻿namespace WarTactics.Shared.Components
 {
     using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Input;
 
     using Nez;
 
@@ -42,7 +43,7 @@
             {
                 this.scene.camera.zoom -= 0.1f;
             }
-
+            
             this.scene.camera.position += cameraMove;
         }
     }

@@ -1,5 +1,8 @@
 ﻿namespace WarTactics.Shared.Components.Units
 {
+    using System;
+    using System.Runtime.InteropServices.WindowsRuntime;
+
     using Nez;
 
     using WarTactics.Shared.Components.Game;
@@ -16,6 +19,8 @@
             this.InitialMaxHealth = health;
             this.Health = health;
         }
+
+        public event EventHandler UnitUpdated;
 
         public int Speed { get; set; }
 
@@ -37,6 +42,45 @@
 
         public bool CanAttack { get; set; }
 
+        public virtual void ExecuteAttackUnit(Unit unit)
+        {
+            var dmg = this.Attack - unit.Armor;
+            unit.DealDamage(dmg);
+            this.CanAttack = false;
+            this.CanMove = false;
+        }
+
+        public virtual void DealDamage(double damage)
+        {
+            this.Health -= damage;
+            this.OnUpdated();
+            if (this.Health <= 0)
+            {
+                this.Die();
+            }
+        }
+
+        public virtual void Die()
+        {
+            this.OnUpdated();
+        }
+
+        public virtual bool CanMoveToField(BoardField field)
+        {
+            return true;
+        }
+
+        public virtual bool CanAttackField(BoardField field)
+        {
+            return field.Unit != null && field.Unit.Player != this.Player;
+        }
+
+        public virtual void Moved()
+        {
+            this.CanMove = false;
+            this.OnUpdated();
+        }
+
         public virtual void TurnEnded()
         {
         }
@@ -45,6 +89,11 @@
         {
             this.CanMove = true;
             this.CanAttack = true;
+        }
+
+        private void OnUpdated()
+        {
+            this.UnitUpdated?.Invoke(this, EventArgs.Empty);
         }
     }
 }

@@ -45,7 +45,17 @@
 
         public virtual bool CanTakeUnit(Unit unit)
         {
-            return this.Unit == null;
+            if (this.Unit != null)
+            {
+                return false;
+            }
+
+            if (this.BoardFieldType == BoardFieldType.Water)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public virtual Unit RemoveUnit()

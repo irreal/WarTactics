@@ -6,6 +6,7 @@
     using Nez;
     using Nez.Textures;
 
+    using WarTactics.Shared.Components;
     using WarTactics.Shared.Scenes.GameScene;
     using WarTactics.Shared.Scenes.MainMenu;
     using WarTactics.Shared.Scenes.MapEditor;
@@ -18,7 +19,10 @@
         public WtGame() : base(1280, 768)
         {
             Core.defaultSamplerState = SamplerState.LinearClamp;
+            Map = GetMap();
         }
+
+        public static BoardFieldType[,] Map { get; set; }
 
         public static Texture2D HexagonesTexture { get; private set; }
 
@@ -54,6 +58,43 @@
             WtGame.scene = new MainMenuScene();
 
             base.LoadContent();
+        }
+
+        private static BoardFieldType[,] GetMap()
+        {
+            var map = new[,]
+                          {
+                              {16,16,16,16,16,16,16,16,16,16,16,16,16,16 },
+                              {16,16,15,15,15,18,18,18,18,16,16,16,16,16 },
+                              {16,16,15,15,15,18,18,18,18,16,16,16,16,16 },
+                              {16,16,15,15,15,18,18,15,15,16,16,16,16,16 },
+                              {16,16,15,15,15,15,15,15,15,16,16,16,16,16 },
+                              {16,16,15,15,15,15,15,15,16,16,16,16,16,16 },
+                              {16,16,15,15,15,15,15,15,16,16,16,16,16,16 },
+                              {16,16,15,15,15,15,15,15,16,16,16,16,16,16 },
+                              {16,16,16,16,16,16,16,16,16,16,16,16,16,16 },
+                              {16,16,16,16,16,16,16,16,16,16,16,16,16,16 },
+                              {16,16,16,16,16,16,16,16,16,16,16,16,16,16 },
+                              {16,16,15,15,15,18,18,18,18,16,16,16,16,16 },
+                              {16,16,15,15,15,18,18,18,18,16,16,16,16,16 },
+                              {16,16,15,15,15,18,18,15,15,16,16,16,16,16 },
+                              {16,16,15,15,15,15,15,15,15,16,16,16,16,16 },
+                              {16,16,15,15,15,15,15,15,16,16,16,16,16,16 },
+                              {16,16,15,15,15,15,15,15,16,16,16,16,16,16 },
+                              {16,16,15,15,15,15,15,15,16,16,16,16,16,16 },
+                              {16,16,16,16,16,16,16,16,16,16,16,16,16,16 },
+                              {16,16,16,16,16,16,16,16,16,16,16,16,16,16 }
+                          };
+            BoardFieldType[,] finalMap = new BoardFieldType[map.GetLength(0), map.GetLength(1)];
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int u = 0; u < map.GetLength(1); u++)
+                {
+                    finalMap[i, u] = (BoardFieldType)map[i, u];
+                }
+            }
+
+            return finalMap;
         }
     }
 }

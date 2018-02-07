@@ -49,7 +49,19 @@
 
             button = new Button(ButtonStyle.create(Color.Black, Color.DarkGray, Color.Green));
             button.add(new Label("Main Menu"));
-            button.onClicked += b => { WtGame.LoadMainMenu(); };
+            button.onClicked += b =>
+                {
+                    var board = this.entity.scene.findComponentOfType<Board>();
+                    for (int col = 0; col < board.Size.X; col++)
+                    {
+                        for (int row = 0; row < board.Size.Y; row++)
+                        {
+                            WtGame.Map[col, row] = board.Fields[col, row].BoardFieldType;
+                        }
+                    }
+
+                    WtGame.LoadMainMenu();
+                };
             table.add(button).setMinWidth(110).setMinHeight(30);
 
             this.stage.addElement(window);

@@ -1,8 +1,10 @@
 ﻿namespace WarTactics.Shared.Scenes.GameScene
 {
     using System.Collections.Generic;
+    using System.Linq;
 
     using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Input;
 
     using Nez;
 
@@ -26,7 +28,7 @@
             boardEntity.setPosition(new Vector2(150, 150));
             this.addEntity(boardEntity);
 
-            var mapInfo = this.GetMap();
+            var mapInfo = WtGame.Map;
 
             var fields = GetFieldsFromMap(mapInfo);
 
@@ -41,7 +43,7 @@
                     count++;
                     BoardField field = null;
 
-                    while (field == null || field.Unit != null)
+                    while (field == null || field.Unit != null || field.BoardFieldType == BoardFieldType.Water)
                     {
                         field = fields[Random.nextInt(mapInfo.GetLength(0)), Random.nextInt(mapInfo.GetLength(1))];
                     }
@@ -61,8 +63,13 @@
 
         public override void update()
         {
-            // this.getOrCreateSceneComponent<MouseCameraControls>().Update();
+            this.getOrCreateSceneComponent<MouseCameraControls>().Update();
             this.getOrCreateSceneComponent<KeyboardCameraControls>().Update();
+            if (Input.isKeyPressed(Keys.Space))
+            {
+                this.findComponentOfType<GameRound>().EndTurn();
+            }
+
             base.update();
         }
 
@@ -110,9 +117,6 @@
                         if (moveFields.Contains(field))
                         {
                             this.ExecuteMove(this.selectedField, field);
-                            this.selectedField = null;
-                            this.BoardHoverLeft(this, e);
-                            this.BoardHoverEntered(this, e);
                         }
                         else
                         {
@@ -150,11 +154,19 @@
         {
             var unit = sourceField.RemoveUnit();
             targetField.TakeUnit(unit);
+            this.selectedField = null;
+            this.BoardHoverLeft(this, new HexCoordsEventArgs(targetField.Coords));
+            this.BoardHoverEntered(this, new HexCoordsEventArgs(targetField.Coords));
+            this.BoardHexagonSelected(this, new HexCoordsEventArgs(targetField.Coords));
         }
 
         private void ExecuteAttack(BoardField sourceField, BoardField targetField)
         {
             sourceField.Unit.ExecuteAttackUnit(targetField.Unit);
+            this.selectedField = null;
+            this.BoardHoverLeft(this, new HexCoordsEventArgs(targetField.Coords));
+            this.BoardHoverEntered(this, new HexCoordsEventArgs(targetField.Coords));
+            this.BoardHexagonSelected(this, new HexCoordsEventArgs(targetField.Coords));
         }
 
         private void BoardHoverLeft(object sender, HexCoordsEventArgs e)
@@ -260,60 +272,35 @@
                 return fields;
             }
 
-            var moveRange = Hex.Range(sourceField.Hex, sourceField.Unit.Speed);
-            foreach (var rangeHex in moveRange)
-            {
-                var ofc = OffsetCoord.QoffsetFromCube(OffsetCoord.EVEN, rangeHex);
-                if (!board.CoordInMap(ofc))
-                {
-                    continue;
-                }
+            List<IntPoint> visited = new List<IntPoint> { sourceField.Coords };
+            List<List<IntPoint>> fringes = new List<List<IntPoint>>();
+            fringes.Add(new List<IntPoint> { sourceField.Coords });
 
-                var targetField = board.Fields[ofc.col, ofc.row];
-                if (targetField.CanTakeUnit(sourceField.Unit) && sourceField.Unit.CanMoveToField(targetField))
+            for (int step = 1; step <= sourceField.Unit.Speed; step++)
+            {
+                fringes.Add(new List<IntPoint>());
+                foreach (var coord in fringes[step - 1])
                 {
-                    fields.Add(targetField);
+                    for (int dir = 0; dir < 6; dir++)
+                    {
+                        var neighbor = OffsetCoord.QoffsetFromCube(OffsetCoord.EVEN, Hex.Neighbor(OffsetCoord.QoffsetToCube(OffsetCoord.EVEN, coord), dir));
+                        if (board.CoordInMap(neighbor))
+                        {
+                            if (!visited.Contains(neighbor))
+                            {
+                                var curField = board.Fields[neighbor.col, neighbor.row];
+                                if (curField.CanTakeUnit(sourceField.Unit))
+                                {
+                                    visited.Add(neighbor);
+                                    fringes[step].Add(neighbor);
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
-            return fields;
-        }
-
-        private BoardFieldType[,] GetMap()
-        {
-            var map = new[,]
-                          {
-                              {16,16,16,16,16,16,16,16,16,16,16,16,16,1 },
-                              {16,16,15,15,15,18,18,18,18,16,16,16,16,1 },
-                              {16,16,15,15,15,18,18,18,18,16,16,16,16,1 },
-                              {16,16,15,15,15,18,18,15,15,16,16,16,16,1 },
-                              {16,16,15,15,15,15,15,15,15,16,16,16,16,1 },
-                              {16,16,15,15,15,15,15,15,16,16,16,16,16,1 },
-                              {16,16,15,15,15,15,15,15,16,16,16,16,16,1 },
-                              {16,16,15,15,15,15,15,15,16,16,16,16,16,1 },
-                              {16,16,16,16,16,16,16,16,16,16,16,16,16,1 },
-                              {16,16,16,16,16,16,16,16,16,16,16,16,16,1 },
-                              {16,16,16,16,16,16,16,16,16,16,16,16,16,1 },
-                              {16,16,15,15,15,18,18,18,18,16,16,16,16,1 },
-                              {16,16,15,15,15,18,18,18,18,16,16,16,16,1 },
-                              {16,16,15,15,15,18,18,15,15,16,16,16,16,1 },
-                              {16,16,15,15,15,15,15,15,15,16,16,16,16,1 },
-                              {16,16,15,15,15,15,15,15,16,16,16,16,16,1 },
-                              {16,16,15,15,15,15,15,15,16,16,16,16,16,1 },
-                              {16,16,15,15,15,15,15,15,16,16,16,16,16,1 },
-                              {16,16,16,16,16,16,16,16,16,16,16,16,16,1 },
-                              {16,16,16,16,16,16,16,16,16,16,16,16,16,1 }
-                          };
-            BoardFieldType[,] finalMap = new BoardFieldType[map.GetLength(0), map.GetLength(1)];
-            for (int i = 0; i < map.GetLength(0); i++)
-            {
-                for (int u = 0; u < map.GetLength(1); u++)
-                {
-                    finalMap[i, u] = (BoardFieldType)map[i, u];
-                }
-            }
-
-            return finalMap;
+            return visited.Select(c => board.Fields[c.X, c.Y]).ToList();
         }
     }
 }

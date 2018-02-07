@@ -25,7 +25,7 @@
                 cameraMove.X = 5f;
             }
 
-            if (Input.mousePosition.Y < 10)
+            if (Input.mousePosition.Y < 100)
             {
                 cameraMove.Y = -5f;
             }
@@ -37,13 +37,19 @@
 
             if (Input.mouseWheelDelta > 0)
             {
+                var oldPos = this.scene.camera.mouseToWorldPoint();
                 this.scene.camera.zoom += 0.1f;
+                var newPos = this.scene.camera.mouseToWorldPoint();
+                this.scene.camera.position -= newPos - oldPos;
             }
             else if (Input.mouseWheelDelta < 0)
             {
+                var oldPos = this.scene.camera.mouseToWorldPoint();
                 this.scene.camera.zoom -= 0.1f;
+                var newPos = this.scene.camera.mouseToWorldPoint();
+                this.scene.camera.position -= newPos - oldPos;
             }
-            
+
             this.scene.camera.position += cameraMove;
         }
     }

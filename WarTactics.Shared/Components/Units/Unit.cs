@@ -1,7 +1,6 @@
 ﻿namespace WarTactics.Shared.Components.Units
 {
     using System;
-    using System.Runtime.InteropServices.WindowsRuntime;
 
     using Nez;
 
@@ -41,6 +40,8 @@
         public bool CanMove { get; set; }
 
         public bool CanAttack { get; set; }
+
+        public virtual bool HasActions => this.CanAttack || this.CanMove;
 
         public virtual void ExecuteAttackUnit(Unit unit)
         {

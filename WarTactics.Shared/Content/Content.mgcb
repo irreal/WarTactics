@@ -10,6 +10,10 @@
 
 #-------------------------------- References --------------------------------#
 
+/reference:..\..\..\nez\Nez\Nez.PipelineImporter\bin\Debug\Ionic.ZLib.dll
+/reference:..\..\..\nez\Nez\Nez.PipelineImporter\bin\Debug\Newtonsoft.Json.dll
+/reference:..\..\..\nez\Nez\Nez.PipelineImporter\bin\Debug\Nez.dll
+/reference:..\..\..\nez\Nez\Nez.PipelineImporter\bin\Debug\Nez.PipelineImporter.dll
 
 #---------------------------------- Content ---------------------------------#
 
@@ -52,10 +56,22 @@
 #begin hexagonImagesMap.txt
 /copy:hexagonImagesMap.txt
 
-#begin MainFont.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
+#begin MainFont.fnt
+/importer:BitmapFontImporter
+/processor:BitmapFontProcessor
+/processorParam:packTexturesIntoXnb=True
+/processorParam:compressTextures=False
+/build:MainFont.fnt
+
+#begin MainFont_0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
-/processorParam:TextureFormat=Compressed
-/build:MainFont.spritefont
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainFont_0.png
 

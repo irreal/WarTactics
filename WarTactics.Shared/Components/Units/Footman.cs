@@ -1,11 +1,10 @@
 ﻿
 namespace WarTactics.Shared.Components.Units
 {
+    using WarTactics.Shared.Components.Units.Attributes;
+
+    [Health(25)]
     public class Footman : Unit
     {
-        public Footman()
-            : base(speed: 6, attackRange: 1, attack: 10, armor: 1, health: 20)
-        {
-        }
     }
 }

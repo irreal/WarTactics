@@ -42,8 +42,10 @@
             {
                 for (int row = 0; row < this.board.Size.Y; row++)
                 {
+                    var index = (col * this.board.Size.X) + row;
+                    float depthOffset = (float)index * 0.00001f;
                     var field = this.board.Fields[col, row];
-                    HexagonEntity hg = new HexagonEntity(field.BoardFieldType, $"Hex{col}{row}");
+                    HexagonEntity hg = new HexagonEntity(field.BoardFieldType, $"Hex{col}{row}", 1 - depthOffset);
                     hg.setParent(this);
                     hg.setPosition(this.board.HexPosition(col, row));
                     this.scene.addEntity(hg);

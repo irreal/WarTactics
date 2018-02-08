@@ -43,6 +43,7 @@
 
             var texture = Core.content.Load<Texture2D>(TypeToContentPath[this.unit.GetType()]);
             var sprite = this.addComponent(new Sprite(texture));
+            sprite.layerDepth = 0.8f;
             this.scale = this.board.HexLayout.size / new Vector2(71, 71);
             var field = this.board.FieldFromUnit(this.unit);
             this.position = this.board.HexPosition(field.Col, field.Row);
@@ -53,9 +54,13 @@
 
             var font = Core.content.Load<BitmapFont>("MainFont");
             this.healthText = new Text(font, this.unit?.Health.ToString("G") ?? string.Empty, new Vector2(-25, 13), Color.Red);
+            this.healthText.layerDepth = 0.6f;
             this.armorText = new Text(font, this.unit?.Armor.ToString("G") ?? string.Empty, new Vector2(15, 13), Color.Blue);
+            this.armorText.layerDepth = 0.6f;
             this.attackText = new Text(font, this.unit?.Attack.ToString("G") ?? string.Empty, new Vector2(-25, -23), Color.Orange);
+            this.attackText.layerDepth = 0.6f;
             this.speedText = new Text(font, this.unit?.Speed.ToString("G") ?? string.Empty, new Vector2(15, -23), Color.Green);
+            this.speedText.layerDepth = 0.6f;
             this.addComponent(this.healthText);
             this.addComponent(this.armorText);
             this.addComponent(this.attackText);
@@ -76,9 +81,7 @@
             if (unitEvent.EventType == UnitEventType.TookDamage)
             {
                 this.UpdateStats();
-                var ent = this.scene.addEntity(new TextEventEntity($"-{unitEvent.Amount}", Color.Red));
-                ent.setScale(2f);
-                ent.position = this.position + new Vector2(0, -15);
+                var ent = this.scene.addEntity(new TextEventEntity($"{unitEvent.Amount}", Color.Red, this.position + new Vector2(-20, -30)));
             }
 
             if (unitEvent.EventType == UnitEventType.Healed)

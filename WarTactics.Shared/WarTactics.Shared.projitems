@@ -11,11 +11,19 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Components\BoardField.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\BoardFieldType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Game\CombatResolver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\KeyboardCameraControls.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\MouseCameraControls.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Game\GameRound.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Board.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Game\Player.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Attributes\ArmorAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Attributes\MoveCountAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Attributes\AttackCountAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Attributes\AttackRangeAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Attributes\AttackAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Attributes\SpeedAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Attributes\HealthAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Events\UnitEventType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Events\UnitUpdatedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Footman.cs" />

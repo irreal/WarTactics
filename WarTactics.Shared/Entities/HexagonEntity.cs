@@ -15,12 +15,12 @@
         private Color? highlightColor;
         private BoardFieldType type;
 
-        public HexagonEntity(BoardFieldType type, string name)
+        public HexagonEntity(BoardFieldType type, string name, float layerDepth)
             : base(name)
         {
             this.type = type;
 
-            this.sprite = new Sprite(WtGame.HexagonSubtextures[(int)type]) { color = this.defaultColor };
+            this.sprite = new Sprite(WtGame.HexagonSubtextures[(int)type]) { color = this.defaultColor, layerDepth = layerDepth };
             this.addComponent(this.sprite);
         }
 
@@ -47,7 +47,7 @@
         {
             var board = this.scene.findComponentOfType<Board>();
             Vector2 hexagonSize = board.HexLayout.size;
-            this.scale = hexagonSize / new Vector2(31, 31);
+            this.scale = hexagonSize / new Vector2(31f, 31f);
             base.onAddedToScene();
         }
     }

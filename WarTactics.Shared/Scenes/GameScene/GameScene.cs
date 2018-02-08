@@ -67,6 +67,7 @@
             this.getOrCreateSceneComponent<KeyboardCameraControls>().Update();
             if (Input.isKeyPressed(Keys.Space))
             {
+                var ent = this.addEntity(new TextEventEntity("Some text", Color.Blue, new Vector2(500, 500)));
                 this.findComponentOfType<GameRound>().EndTurn();
                 (this.findEntity("Board") as BoardEntity)?.RefreshHover();
             }
@@ -163,7 +164,7 @@
 
         private void ExecuteAttack(BoardField sourceField, BoardField targetField)
         {
-            sourceField.Unit.ExecuteAttackUnit(targetField.Unit);
+            CombatResolver.UnitAttackingUnit(sourceField.Unit, targetField.Unit);
             this.selectedField = null;
             this.BoardHoverLeft(this, new HexCoordsEventArgs(targetField.Coords));
             this.BoardHoverEntered(this, new HexCoordsEventArgs(targetField.Coords));

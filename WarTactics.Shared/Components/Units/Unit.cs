@@ -5,6 +5,7 @@
     using Nez;
 
     using WarTactics.Shared.Components.Game;
+    using WarTactics.Shared.Components.Units.Events;
 
     public abstract class Unit : Component
     {
@@ -19,7 +20,7 @@
             this.Health = health;
         }
 
-        public event EventHandler UnitUpdated;
+        public event EventHandler<UnitUpdatedEventArgs> UnitUpdated;
 
         public int Speed { get; set; }
 
@@ -54,7 +55,7 @@
         public virtual void DealDamage(double damage)
         {
             this.Health -= damage;
-            this.OnUpdated();
+            this.OnUpdated(new UnitEvent(UnitEventType.TookDamage, damage));
             if (this.Health <= 0)
             {
                 this.Die();
@@ -63,7 +64,7 @@
 
         public virtual void Die()
         {
-            this.OnUpdated();
+            this.OnUpdated(new UnitEvent(UnitEventType.Died));
         }
 
         public virtual bool CanMoveToField(BoardField field)
@@ -79,7 +80,7 @@
         public virtual void Moved()
         {
             this.CanMove = false;
-            this.OnUpdated();
+            this.OnUpdated(new UnitEvent(UnitEventType.Moved));
         }
 
         public virtual void TurnEnded()
@@ -92,9 +93,9 @@
             this.CanAttack = true;
         }
 
-        private void OnUpdated()
+        private void OnUpdated(UnitEvent unitEvent)
         {
-            this.UnitUpdated?.Invoke(this, EventArgs.Empty);
+            this.UnitUpdated?.Invoke(this, new UnitUpdatedEventArgs(unitEvent));
         }
     }
 }

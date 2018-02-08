@@ -12,6 +12,7 @@
 
     using WarTactics.Shared.Components;
     using WarTactics.Shared.Components.Units;
+    using WarTactics.Shared.Components.Units.Events;
 
     public class UnitEntity : Entity
     {
@@ -32,7 +33,7 @@
         public UnitEntity(Unit unit, string name) : base(name)
         {
             this.unit = unit;
-            this.unit.UnitUpdated += (s, e) => { this.Update(); };
+            this.unit.UnitUpdated += (s, e) => { this.Update(e.UnitEvent); };
         }
 
         public override void onAddedToScene()
@@ -42,7 +43,7 @@
 
             var texture = Core.content.Load<Texture2D>(TypeToContentPath[this.unit.GetType()]);
             var sprite = this.addComponent(new Sprite(texture));
-            this.scale = (Vector2)this.board.HexLayout.size / new Vector2(71, 71);
+            this.scale = this.board.HexLayout.size / new Vector2(71, 71);
             var field = this.board.FieldFromUnit(this.unit);
             this.position = this.board.HexPosition(field.Col, field.Row);
             if (this.unit?.Player != null)
@@ -63,19 +64,41 @@
             base.onAddedToScene();
         }
 
-        public void Update()
+        public void Update(UnitEvent unitEvent)
         {
             var field = this.board.FieldFromUnit(this.unit);
-            this.healthText.text = this.unit.Health.ToString("G");
-            if (field != null)
+
+            if (unitEvent.EventType == UnitEventType.Moved && field != null)
             {
                 this.localPosition = this.board.HexPosition(field.Col, field.Row);
             }
 
-            if (this.unit.Health <= 0)
+            if (unitEvent.EventType == UnitEventType.TookDamage)
             {
+                this.UpdateStats();
+                var ent = this.scene.addEntity(new TextEventEntity($"-{unitEvent.Amount}", Color.Red));
+                ent.setScale(2f);
+                ent.position = this.position + new Vector2(0, -15);
+            }
+
+            if (unitEvent.EventType == UnitEventType.Healed)
+            {
+                this.UpdateStats();
+            }
+
+            if (unitEvent.EventType == UnitEventType.Died)
+            {
+                this.getComponent<Sprite>().enabled = false;
                 this.destroy();
             }
+        }
+
+        private void UpdateStats()
+        {
+            this.healthText.text = this.unit?.Health.ToString("G");
+            this.armorText.text = this.unit?.Armor.ToString("G");
+            this.attackText.text = this.unit?.Attack.ToString("G");
+            this.speedText.text = this.unit?.Speed.ToString("G");
         }
     }
 }

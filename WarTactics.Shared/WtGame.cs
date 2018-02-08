@@ -4,6 +4,7 @@
     using Microsoft.Xna.Framework.Graphics;
 
     using Nez;
+    using Nez.BitmapFonts;
     using Nez.Textures;
 
     using WarTactics.Shared.Components;
@@ -16,17 +17,21 @@
     /// </summary>
     public class WtGame : Core
     {
+
         public WtGame() : base(1280, 768)
         {
             Core.defaultSamplerState = SamplerState.LinearClamp;
             Map = GetMap();
         }
 
+
         public static BoardFieldType[,] Map { get; set; }
 
         public static Texture2D HexagonesTexture { get; private set; }
 
         public static Subtexture[] HexagonSubtextures { get; private set; }
+
+        public static BitmapFont MainFont { get; private set; }
 
         public static void LoadMapEditor()
         {
@@ -45,6 +50,8 @@
 
         protected override void LoadContent()
         {
+            MainFont = Core.content.Load<BitmapFont>("MainFont");
+
             HexagonesTexture = Core.content.Load<Texture2D>("hexagonImages");
             var hexagonLines = System.IO.File.ReadAllLines(@"Content\hexagonImagesMap.txt");
             HexagonSubtextures = new Subtexture[hexagonLines.Length];

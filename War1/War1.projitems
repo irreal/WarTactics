@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>525ff03f-b94a-404a-b77c-a9bf07056b7e</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>War1</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)MainPage.xaml.cs">
+      <DependentUpon>MainPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Units\Archer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Units\Berzerker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Units\Footman.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WarBasics\Abilities\Ability.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WarBasics\Abilities\ActivatedAbilities\ActivatedAbility.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WarBasics\Abilities\ActivatedAbilities\PowerAttack.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WarBasics\Abilities\ActivatedAbilities\Sprint.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WarBasics\Abilities\PassiveAbilities\ArmourPiercing.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WarBasics\Abilities\PassiveAbilities\FirstStrike.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WarBasics\Abilities\PassiveAbilities\PassiveAbility.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WarBasics\Abilities\PassiveAbilities\Ranged.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WarBasics\Abilities\StartOfTurnAbility.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WarBasics\CombatResolver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WarBasics\Map\Map.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WarBasics\Map\MapPosition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WarBasics\Unit.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

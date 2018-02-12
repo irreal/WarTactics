@@ -14,6 +14,8 @@
     {
         private BoardEntity mapEntity;
 
+        private HexagonEntity hexagonEntity;
+
         public override void initialize()
         {
             this.mapEntity = new BoardEntity();
@@ -26,6 +28,9 @@
             var mapInfo = WtGame.Map;
             var fields = GetFieldsFromMap(mapInfo);
             this.mapEntity.SetupBoard(fields);
+
+            this.ReCreateHexagonEntity();
+            this.hexagonEntity.setEnabled(false);
 
             this.addRenderer(new RenderLayerRenderer(0, 0));
             var screenSpaceRenderer = new ScreenSpaceRenderer(1, 1);
@@ -63,6 +68,7 @@
                 var component = this.getSceneComponent<MapEditorSceneComponent>();
                 component.CurrentFieldType = (BoardFieldType)(((int)component.CurrentFieldType + 1) % Enum.GetValues(typeof(BoardFieldType)).Length);
                 this.findComponentOfType<MapEditorUi>().UpdateSelectedSubTexture(component.CurrentFieldType);
+                this.ReCreateHexagonEntity();
             }
 
             if (Input.isKeyPressed(Keys.D1))
@@ -73,8 +79,10 @@
                 {
                     currentInt = Enum.GetValues(typeof(BoardFieldType)).Length - 1;
                 }
+
                 component.CurrentFieldType = (BoardFieldType)currentInt;
                 this.findComponentOfType<MapEditorUi>().UpdateSelectedSubTexture(component.CurrentFieldType);
+                this.ReCreateHexagonEntity();
             }
 
             base.update();
@@ -106,6 +114,7 @@
             var hex = this.mapEntity.HexAtCoords(e.Coords);
             if (hex != null)
             {
+                this.hexagonEntity.setEnabled(false);
                 hex.HighlightColor = null;
             }
         }
@@ -115,6 +124,9 @@
             var hex = this.mapEntity.HexAtCoords(e.Coords);
             if (hex != null)
             {
+                this.hexagonEntity.setEnabled(true);
+                this.hexagonEntity.HighlightColor = Color.LightGray;
+                this.hexagonEntity.position = hex.position;
                 hex.HighlightColor = Color.LightBlue;
                 if (Input.leftMouseButtonDown)
                 {
@@ -123,6 +135,18 @@
                     this.mapEntity.UpdateMapInfo();
                 }
             }
+        }
+
+        private void ReCreateHexagonEntity()
+        {
+            var position = this.hexagonEntity?.position;
+            this.hexagonEntity?.destroy();
+            this.hexagonEntity = new HexagonEntity(this.getOrCreateSceneComponent<MapEditorSceneComponent>().CurrentFieldType, "PaintToolHexagon", 0);
+            if (position.HasValue)
+            {
+                this.hexagonEntity.position = position.Value;
+            }
+            this.addEntity(this.hexagonEntity);
         }
     }
 }

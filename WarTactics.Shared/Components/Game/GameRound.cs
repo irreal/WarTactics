@@ -74,6 +74,8 @@
                 this.currentTurn++;
             }
 
+            this.CurrentPlayer.StrategyPoints += 3;
+
             foreach (var unit in this.Board.Units)
             {
                 unit.TurnStarted();

@@ -33,9 +33,9 @@ namespace War1.WarBasics
 
         public void ChangeCurrenthHealthByAmount(int n) { CurrentHealth = Math.Min(MaxHealth, CurrentHealth + n); }
 
-        public void TakeDamage(int damage, bool ignoresArmour = false)
+        public void TakeDamage(int damage, bool ignoresAmour = false)
         {
-            if (ignoresArmour) { ChangeCurrenthHealthByAmount(-damage); return; }
+            if (ignoresAmour) { ChangeCurrenthHealthByAmount(-damage); return; }
             ChangeCurrenthHealthByAmount(Math.Min(-1, -damage + CurrentArmour));
         }
 

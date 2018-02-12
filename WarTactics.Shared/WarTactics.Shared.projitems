@@ -17,8 +17,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Components\Game\GameRound.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Board.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Game\Player.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Abilities\Ability.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Abilities\Passive\ActiveAbility.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Abilities\Passive\Mobility.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Abilities\Passive\PassiveAbility.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Attributes\ArmorAttribute.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Attributes\MoveCountAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Attributes\AttackCountAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Attributes\AttackRangeAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Components\Units\Attributes\AttackAttribute.cs" />
@@ -51,5 +54,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Components\Units\Abilities\Active\" />
   </ItemGroup>
 </Project>

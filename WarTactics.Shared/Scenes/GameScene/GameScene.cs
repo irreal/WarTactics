@@ -156,6 +156,9 @@
         {
             var unit = sourceField.RemoveUnit();
             targetField.TakeUnit(unit);
+            var distance = Hex.Distance(sourceField.Hex, targetField.Hex);
+            unit.Moved(distance);
+
             this.selectedField = null;
             this.BoardHoverLeft(this, new HexCoordsEventArgs(targetField.Coords));
             this.BoardHoverEntered(this, new HexCoordsEventArgs(targetField.Coords));
@@ -278,7 +281,7 @@
             List<List<IntPoint>> fringes = new List<List<IntPoint>>();
             fringes.Add(new List<IntPoint> { sourceField.Coords });
 
-            for (int step = 1; step <= sourceField.Unit.Speed; step++)
+            for (int step = 1; step <= sourceField.Unit.SpeedRemaining; step++)
             {
                 fringes.Add(new List<IntPoint>());
                 foreach (var coord in fringes[step - 1])

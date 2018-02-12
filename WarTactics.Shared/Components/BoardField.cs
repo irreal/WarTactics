@@ -69,7 +69,6 @@
         public virtual void TakeUnit(Unit unit)
         {
             this.SetUnit(unit);
-            unit.Moved();
         }
 
         public virtual void TurnEnded()

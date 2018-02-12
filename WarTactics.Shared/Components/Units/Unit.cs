@@ -1,23 +1,29 @@
 ﻿namespace WarTactics.Shared.Components.Units
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     using Nez;
 
     using WarTactics.Shared.Components.Game;
+    using WarTactics.Shared.Components.Units.Abilities;
+    using WarTactics.Shared.Components.Units.Abilities.Passive;
     using WarTactics.Shared.Components.Units.Attributes;
     using WarTactics.Shared.Components.Units.Events;
 
     [Health(20)]
-    [Speed(2)]
+    [Speed(6)]
     [Attack(10)]
     [Armor(0)]
     [AttackRange(1)]
     [AttackCount(2)]
-    [MoveCount(2)]
+    [Mobility]
     public abstract class Unit : Component
     {
+        private readonly List<PassiveAbility> passiveAbilities = new List<PassiveAbility>();
+        private readonly List<ActiveAbility> activeAbilities = new List<ActiveAbility>();
+
         protected Unit()
         {
             var healthAttribute = this.GetAttribute<HealthAttribute>();
@@ -25,7 +31,6 @@
             var attackAttribute = this.GetAttribute<AttackAttribute>();
             var armorAttribute = this.GetAttribute<ArmorAttribute>();
             var attackRangeAttribute = this.GetAttribute<AttackRangeAttribute>();
-            var moveCountAttribute = this.GetAttribute<MoveCountAttribute>();
             var attackCountAttribute = this.GetAttribute<AttackCountAttribute>();
 
             this.MaxHealth = healthAttribute.MaximumAmount;
@@ -35,17 +40,31 @@
             this.AttackRange = attackRangeAttribute.Amount;
             this.Attack = attackAttribute.Amount;
             this.Armor = armorAttribute.Amount;
-            this.MoveCount = moveCountAttribute.Amount;
             this.AttackCount = attackCountAttribute.Amount;
+
+            var abilityAttributes = this.GetAttributes<Ability>();
+            foreach (var ab in abilityAttributes)
+            {
+                if (ab is PassiveAbility pa)
+                {
+                    this.passiveAbilities.Add(pa);
+                }
+                else if (ab is ActiveAbility aa)
+                {
+                    this.activeAbilities.Add(aa);
+                }
+            }
         }
 
         public event EventHandler<UnitUpdatedEventArgs> UnitUpdated;
 
+        public IReadOnlyCollection<PassiveAbility> PassiveAbilities => this.passiveAbilities;
+
+        public IReadOnlyCollection<ActiveAbility> ActiveAbilities => this.activeAbilities;
+
         public int Speed { get; }
 
-        public int MoveCount { get; }
-
-        public int MovesRemaining { get; private set; }
+        public int SpeedRemaining { get; private set; }
 
         public int AttackRange { get; }
 
@@ -55,7 +74,7 @@
 
         public int AttacksRemaining { get; private set; }
 
-        public double Armor { get;  }
+        public double Armor { get; }
 
         public double Health { get; private set; }
 
@@ -65,11 +84,16 @@
 
         public Player Player { get; set; }
 
-        public bool CanMove => this.MovesRemaining > 0;
+        public bool CanMove => this.SpeedRemaining > 0;
 
         public bool CanAttack => this.AttacksRemaining > 0;
 
         public virtual bool HasActions => this.CanAttack || this.CanMove;
+
+        public T GetAbility<T>() where T : Ability
+        {
+            return this.passiveAbilities.FirstOrDefault(pa => pa is T) as T ?? this.activeAbilities.FirstOrDefault(aa => aa is T) as T;
+        }
 
         public virtual double AboutToAttack(Unit unit, bool selfInitiated)
         {
@@ -81,7 +105,10 @@
             if (selfInitiated)
             {
                 this.AttacksRemaining -= 1;
-                this.MovesRemaining = 0;
+                if (this.GetAbility<Mobility>() == null)
+                {
+                    this.SpeedRemaining = 0;
+                }
             }
         }
 
@@ -119,9 +146,9 @@
             return field.Unit != null && field.Unit.Player != this.Player;
         }
 
-        public virtual void Moved()
+        public virtual void Moved(int distance)
         {
-            this.MovesRemaining -= 1;
+            this.SpeedRemaining -= distance;
             this.OnUpdated(new UnitEvent(UnitEventType.Moved));
         }
 
@@ -132,7 +159,7 @@
         public virtual void TurnStarted()
         {
             this.AttacksRemaining = this.AttackCount;
-            this.MovesRemaining = this.MoveCount;
+            this.SpeedRemaining = this.Speed;
         }
 
         private void OnUpdated(UnitEvent unitEvent)
@@ -143,6 +170,11 @@
         private T GetAttribute<T>()
         {
             return (T)this.GetType().GetCustomAttributes(typeof(T), true).FirstOrDefault();
+        }
+
+        private T[] GetAttributes<T>()
+        {
+            return Array.ConvertAll(this.GetType().GetCustomAttributes(typeof(T), true), item => (T)item);
         }
     }
 }

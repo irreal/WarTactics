@@ -8,6 +8,7 @@
     using Nez;
 
     using WarTactics.Shared.Entities;
+    using WarTactics.Shared.Scenes.GameScene;
 
     public class GameRound : Component
     {
@@ -24,6 +25,8 @@
         public bool HasStarted { get; private set; }
 
         public Board Board { get; private set; }
+
+        public int CurrentTurn => this.currentTurn;
 
         public void Start(Board board)
         {
@@ -68,6 +71,8 @@
                 field.TurnEnded();
             }
 
+            this.entity.scene.TurnEnded();
+
             this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.Players.Count;
             if (this.CurrentPlayer == this.firstPlayerToPlay)
             {
@@ -86,7 +91,8 @@
                 field.TurnStarted();
             }
 
-            this.entity.scene.addEntity(new TextEventEntity($"Turn {this.currentTurn}{Environment.NewLine}{this.CurrentPlayer.Name}'s turn!", this.CurrentPlayer.Color, Screen.center, true));
+            this.entity.scene.TurnStarted();
+
         }
     }
 }

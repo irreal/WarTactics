@@ -1,12 +1,16 @@
 ﻿namespace WarTactics.Shared.Scenes.GameScene
 {
+    using System;
+
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
 
     using Nez;
     using Nez.UI;
 
+    using WarTactics.Shared.Components;
     using WarTactics.Shared.Components.Game;
+    using WarTactics.Shared.Entities;
 
     public class GameSceneUi : UICanvas
     {
@@ -36,6 +40,16 @@
             btn.add(lbl);
             btn.setPosition(20, 255);
             this.stage.addElement(btn);
+        }
+
+        public void TurnEnded(GameRound gameRound)
+        {
+
+        }
+
+        public void TurnStarted(GameRound gameRound)
+        {
+            this.entity.scene.addEntity(new TextEventEntity($"Turn {gameRound.CurrentTurn}{Environment.NewLine}{gameRound.CurrentPlayer.Name}'s turn!", gameRound.CurrentPlayer.Color, Screen.center, true));
         }
     }
 }

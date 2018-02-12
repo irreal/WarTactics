@@ -17,18 +17,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin footman.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:footman.png
-
 #begin frame.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -40,21 +28,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:frame.png
-
-#begin hexagonImages.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:hexagonImages.png
-
-#begin hexagonImagesMap.txt
-/copy:hexagonImagesMap.txt
 
 #begin MainFont.fnt
 /importer:BitmapFontImporter
@@ -74,4 +47,31 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:MainFont_0.png
+
+#begin hexagonImages.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:hexagonImages.png
+
+#begin hexagonImagesMap.txt
+/copy:hexagonImagesMap.txt
+
+#begin footman.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:footman.png
 

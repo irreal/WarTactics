@@ -12,12 +12,17 @@
 
     public class Board : Component
     {
+        public static int BoardLayoutType = OffsetCoord.ODD;
+
         private readonly BoardField[,] fields;
 
         public Board(BoardField[,] boardFields)
         {
             this.fields = boardFields;
             this.Size = new IntPoint(boardFields.GetLength(0), boardFields.GetLength(1));
+            
+            // orientation, size, origin
+            this.HexLayout = new Layout(Layout.PointDy, new PointD(49, 49), new PointD(0, 0));
         }
 
         public BoardField[,] Fields => this.fields;
@@ -26,7 +31,7 @@
 
         public IntPoint Size { get; }
 
-        public Layout HexLayout { get; } = new Layout(Layout.flat, new PointD(41, 41), new PointD(0, 0));
+        public Layout HexLayout { get; }
 
         public BoardField FieldFromUnit(Unit unit)
         {
@@ -45,7 +50,7 @@
 
         public IntPoint IntPointFromPosition(Vector2 position)
         {
-            return OffsetCoord.QoffsetFromCube(OffsetCoord.EVEN, FractionalHex.HexRound(Layout.PixelToHex(this.HexLayout, position)));
+            return OffsetCoord.QoffsetFromCube(Board.BoardLayoutType, FractionalHex.HexRound(Layout.PixelToHex(this.HexLayout, position)));
         }
 
         public IEnumerable<BoardField> BoardFields()

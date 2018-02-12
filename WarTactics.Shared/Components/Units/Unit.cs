@@ -13,12 +13,11 @@
     using WarTactics.Shared.Components.Units.Events;
 
     [Health(20)]
-    [Speed(6)]
-    [Attack(10)]
-    [Armor(0)]
+    [Speed(2)]
+    [Attack(20)]
+    [Armor(10)]
     [AttackRange(1)]
-    [AttackCount(2)]
-    [Mobility]
+    [AttackCount(1)]
     public abstract class Unit : Component
     {
         private readonly List<PassiveAbility> passiveAbilities = new List<PassiveAbility>();
@@ -70,11 +69,15 @@
 
         public double Attack { get; }
 
+        public double CurrentAttackValue => this.CalculateAttackValue();
+
         public int AttackCount { get; }
 
         public int AttacksRemaining { get; private set; }
 
         public double Armor { get; }
+
+        public double CurrentArmorValue => this.CalculateArmorValue();
 
         public double Health { get; private set; }
 
@@ -97,7 +100,7 @@
 
         public virtual double AboutToAttack(Unit unit, bool selfInitiated)
         {
-            return this.Attack;
+            return this.CalculateAttackValue();
         }
 
         public virtual void FinishedAttacking(Unit unit, bool selfInitiated)
@@ -114,7 +117,7 @@
 
         public virtual double AboutToBeAttacked(Unit unit, bool selfInitiated)
         {
-            return this.Armor;
+            return this.CalculateArmorValue();
         }
 
         public virtual void FinishedBeingAttacked(Unit unit, bool selfInitiated)
@@ -160,6 +163,16 @@
         {
             this.AttacksRemaining = this.AttackCount;
             this.SpeedRemaining = this.Speed;
+        }
+
+        private double CalculateArmorValue()
+        {
+            return this.Armor;
+        }
+
+        private double CalculateAttackValue()
+        {
+            return this.Attack;
         }
 
         private void OnUpdated(UnitEvent unitEvent)

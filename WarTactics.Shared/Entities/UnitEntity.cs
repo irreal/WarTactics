@@ -44,7 +44,7 @@
             var texture = Core.content.Load<Texture2D>(TypeToContentPath[this.unit.GetType()]);
             var sprite = this.addComponent(new Sprite(texture));
             sprite.layerDepth = 0.8f;
-            this.scale = this.board.HexLayout.size / new Vector2(71, 71);
+            this.scale = this.board.HexLayout.size / new Vector2(81, 81);
             var field = this.board.FieldFromUnit(this.unit);
             this.position = this.board.HexPosition(field.Col, field.Row);
             if (this.unit?.Player != null)
@@ -81,7 +81,7 @@
             if (unitEvent.EventType == UnitEventType.TookDamage)
             {
                 this.UpdateStats();
-                var ent = this.scene.addEntity(new TextEventEntity($"{unitEvent.Amount}", Color.Red, this.position + new Vector2(-20, -30)));
+                var ent = this.scene.addEntity(new TextEventEntity($"{unitEvent.Amount}", Color.Red, this.position + new Vector2(-20, -30), false));
             }
 
             if (unitEvent.EventType == UnitEventType.Healed)

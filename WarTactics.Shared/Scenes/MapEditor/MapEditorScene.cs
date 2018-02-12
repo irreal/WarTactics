@@ -1,6 +1,9 @@
 ﻿namespace WarTactics.Shared.Scenes.MapEditor
 {
+    using System;
+
     using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Input;
 
     using Nez;
 
@@ -55,6 +58,25 @@
         {
             this.getOrCreateSceneComponent<MouseCameraControls>().Update();
             this.getOrCreateSceneComponent<KeyboardCameraControls>().Update();
+            if (Input.isKeyPressed(Keys.D2))
+            {
+                var component = this.getSceneComponent<MapEditorSceneComponent>();
+                component.CurrentFieldType = (BoardFieldType)(((int)component.CurrentFieldType + 1) % Enum.GetValues(typeof(BoardFieldType)).Length);
+                this.findComponentOfType<MapEditorUi>().UpdateSelectedSubTexture(component.CurrentFieldType);
+            }
+
+            if (Input.isKeyPressed(Keys.D1))
+            {
+                var component = this.getSceneComponent<MapEditorSceneComponent>();
+                var currentInt = (int)component.CurrentFieldType - 1;
+                if (currentInt < 0)
+                {
+                    currentInt = Enum.GetValues(typeof(BoardFieldType)).Length - 1;
+                }
+                component.CurrentFieldType = (BoardFieldType)currentInt;
+                this.findComponentOfType<MapEditorUi>().UpdateSelectedSubTexture(component.CurrentFieldType);
+            }
+
             base.update();
         }
 

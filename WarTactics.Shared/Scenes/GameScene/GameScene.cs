@@ -25,7 +25,7 @@
             boardEntity.HoverEntered += this.BoardHoverEntered;
             boardEntity.HoverLeft += this.BoardHoverLeft;
             boardEntity.HexagonSelected += this.BoardHexagonSelected;
-            boardEntity.setPosition(new Vector2(150, 150));
+            boardEntity.setPosition(new Vector2(-150, -50));
             this.addEntity(boardEntity);
 
             var mapInfo = WtGame.Map;
@@ -43,7 +43,7 @@
                     count++;
                     BoardField field = null;
 
-                    while (field == null || field.Unit != null || field.BoardFieldType == BoardFieldType.Water)
+                    while (field == null || field.Unit != null || field.BoardFieldType == BoardFieldType.Stone_01)
                     {
                         field = fields[Random.nextInt(mapInfo.GetLength(0)), Random.nextInt(mapInfo.GetLength(1))];
                     }
@@ -57,6 +57,8 @@
             this.addRenderer(new RenderLayerRenderer(0, 0));
             this.addRenderer(new ScreenSpaceRenderer(1, 1));
 
+            gr.Start(boardEntity.getComponent<Board>());
+
             this.createEntity("UI").addComponent<GameSceneUi>().renderLayer = 1;
             this.clearColor = Color.Wheat;
         }
@@ -67,7 +69,6 @@
             this.getOrCreateSceneComponent<KeyboardCameraControls>().Update();
             if (Input.isKeyPressed(Keys.Space))
             {
-                var ent = this.addEntity(new TextEventEntity("Some text", Color.Blue, new Vector2(500, 500)));
                 this.findComponentOfType<GameRound>().EndTurn();
                 (this.findEntity("Board") as BoardEntity)?.RefreshHover();
             }
@@ -252,7 +253,7 @@
             var attackRange = Hex.Range(sourceField.Hex, sourceField.Unit.AttackRange);
             foreach (var rangeHex in attackRange)
             {
-                var ofc = OffsetCoord.QoffsetFromCube(OffsetCoord.EVEN, rangeHex);
+                var ofc = OffsetCoord.QoffsetFromCube(Board.BoardLayoutType, rangeHex);
                 if (!board.CoordInMap(ofc))
                 {
                     continue;
@@ -288,7 +289,7 @@
                 {
                     for (int dir = 0; dir < 6; dir++)
                     {
-                        var neighbor = OffsetCoord.QoffsetFromCube(OffsetCoord.EVEN, Hex.Neighbor(OffsetCoord.QoffsetToCube(OffsetCoord.EVEN, coord), dir));
+                        var neighbor = OffsetCoord.QoffsetFromCube(Board.BoardLayoutType, Hex.Neighbor(OffsetCoord.QoffsetToCube(Board.BoardLayoutType, coord), dir));
                         if (board.CoordInMap(neighbor))
                         {
                             if (!visited.Contains(neighbor))

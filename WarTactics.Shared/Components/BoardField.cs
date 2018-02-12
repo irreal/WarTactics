@@ -5,13 +5,13 @@
 
     public class BoardField
     {
-        public BoardField(int col, int row, BoardFieldType boardFieldType = BoardFieldType.Water)
+        public BoardField(int col, int row, BoardFieldType boardFieldType = BoardFieldType.Stone_01)
         {
             this.Col = col;
             this.Row = row;
             this.Coords = new IntPoint(col, row);
             this.BoardFieldType = boardFieldType;
-            this.Hex = OffsetCoord.QoffsetToCube(OffsetCoord.EVEN, new OffsetCoord(col, row));
+            this.Hex = OffsetCoord.QoffsetToCube(Board.BoardLayoutType, new OffsetCoord(col, row));
         }
 
         public BoardFieldType BoardFieldType { get; set; }
@@ -50,7 +50,7 @@
                 return false;
             }
 
-            if (this.BoardFieldType == BoardFieldType.Water)
+            if (this.BoardFieldType == BoardFieldType.Stone_01)
             {
                 return false;
             }

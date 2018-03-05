@@ -207,16 +207,28 @@
 
         private void BoardHoverEntered(object sender, HexCoordsEventArgs e)
         {
-            if (this.selectedField != null)
-            {
-                return;
-            }
 
             var board = this.findComponentOfType<Board>();
             var boardEntity = this.findEntity("Board") as BoardEntity;
             var gameRound = this.findComponentOfType<GameRound>();
             if (board == null || boardEntity == null)
             {
+                return;
+            }
+
+            if (this.selectedField != null)
+            {
+                var fields = this.FieldsUnitCanMoveTo(this.selectedField);
+                var route = fields.FirstOrDefault(f => f[f.Count - 1] == board.Fields[e.Coords.X, e.Coords.Y]);
+                if (route != null)
+                {
+                    foreach (var f in fields.SelectMany(f => f))
+                    {
+                        var hex = boardEntity.HexAtCoords(f.Coords);
+                        hex.HighlightColor = route.Contains(f) ? gameRound.CurrentPlayer.Color : new Color(Color.White, 200);
+                    }
+                }
+
                 return;
             }
 

@@ -28,6 +28,7 @@
 
         public event EventHandler<HexCoordsEventArgs> HexagonSelected;
 
+
         public HexagonEntity[,] Hexagons => this.hexagons;
 
         public IReadOnlyCollection<HexagonEntity> HexagonList => this.hexagonList;

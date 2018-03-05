@@ -31,10 +31,16 @@
             var mapInfo = WtGame.Map;
 
             var fields = GetFieldsFromMap(mapInfo);
+            var board = new Board(fields);
+            boardEntity.SetupBoard(board);
 
-            boardEntity.SetupBoard(fields);
+            var game = new GameRound(board);
+            var player1 = new Player("Irreal", Color.Blue);
+            var player2 = new Player("Igor", Color.Red);
+            game.Players.Add(player1);
+            game.Players.Add(player2);
 
-            var gr = this.addEntity(new GameEntity()).getComponent<GameRound>();
+            var gr = this.addEntity(new GameEntity(game)).getComponent<GameRound>();
             int count = 0;
             foreach (var player in gr.Players)
             {
@@ -57,7 +63,7 @@
             this.addRenderer(new RenderLayerRenderer(0, 0));
             this.addRenderer(new ScreenSpaceRenderer(1, 1));
 
-            gr.Start(boardEntity.getComponent<Board>());
+            gr.Start();
 
             this.createEntity("UI").addComponent<GameSceneUi>().renderLayer = 1;
             this.clearColor = Color.Wheat;
@@ -279,8 +285,7 @@
             }
 
             List<IntPoint> visited = new List<IntPoint> { sourceField.Coords };
-            List<List<IntPoint>> fringes = new List<List<IntPoint>>();
-            fringes.Add(new List<IntPoint> { sourceField.Coords });
+            List<List<IntPoint>> fringes = new List<List<IntPoint>> { new List<IntPoint> { sourceField.Coords } };
 
             for (int step = 1; step <= sourceField.Unit.SpeedRemaining; step++)
             {

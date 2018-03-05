@@ -97,11 +97,10 @@
             }
         }
 
-        public void SetupBoard(BoardField[,] mapInfo)
+        public void SetupBoard(Board board)
         {
-            this.board = new Board(mapInfo);
-            this.removeComponent<Board>();
-            this.addComponent(this.board);
+            this.board = board;
+            this.addComponent(board);
             this.CreateHexagons();
         }
 

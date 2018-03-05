@@ -68,7 +68,7 @@
             base.LoadContent();
         }
 
-        private static BoardFieldType[,] GetMap()
+        public static BoardFieldType[,] GetMap()
         {
             if (System.IO.File.Exists(@"MainMap.txt"))
             {

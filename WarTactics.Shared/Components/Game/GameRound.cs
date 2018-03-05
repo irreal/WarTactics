@@ -8,15 +8,19 @@
     using Nez;
 
     using WarTactics.Shared.Entities;
-    using WarTactics.Shared.Scenes.GameScene;
 
     public class GameRound : Component
     {
         private int currentPlayerIndex = -1;
 
-        private int currentTurn = 0;
+        private int currentTurn;
 
         private Player firstPlayerToPlay;
+
+        public GameRound(Board board)
+        {
+            this.Board = board;
+        }
 
         public List<Player> Players { get; } = new List<Player>();
 
@@ -24,21 +28,22 @@
 
         public bool HasStarted { get; private set; }
 
-        public Board Board { get; private set; }
+        public Board Board { get; }
 
         public int CurrentTurn => this.currentTurn;
 
-        public void Start(Board board)
+        public Guid Id { get; set; }
+
+        public void Start()
         {
-            this.Board = board;
             if (this.HasStarted)
             {
-                throw new System.Exception("The game is already running!");
+                throw new Exception("The game is already running!");
             }
 
             if (this.Players.Count < 2)
             {
-                throw new System.Exception("Can't start a game with less than two players");
+                throw new Exception("Can't start a game with less than two players");
             }
 
             this.HasStarted = true;
@@ -71,8 +76,7 @@
                 field.TurnEnded();
             }
 
-            this.entity.scene.TurnEnded();
-
+            // this.entity.scene.TurnEnded();
             this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.Players.Count;
             if (this.CurrentPlayer == this.firstPlayerToPlay)
             {
@@ -91,8 +95,7 @@
                 field.TurnStarted();
             }
 
-            this.entity.scene.TurnStarted();
-
+            // this.entity.scene.TurnStarted();
         }
     }
 }

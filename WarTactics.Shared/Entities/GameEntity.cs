@@ -10,15 +10,10 @@
 
     public class GameEntity : Entity
     {
-        public GameEntity()
+        public GameEntity(GameRound gameRound)
         {
-            var game = new GameRound();
-            var player1 = new Player("Irreal", Color.Blue);
-            var player2 = new Player("Igor", Color.Red);
-            game.Players.Add(player1);
-            game.Players.Add(player2);
 
-            this.addComponent(game);
+            this.addComponent(gameRound);
         }
 
         public override void onAddedToScene()

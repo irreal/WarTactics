@@ -27,7 +27,8 @@
 
             var mapInfo = WtGame.Map;
             var fields = GetFieldsFromMap(mapInfo);
-            this.mapEntity.SetupBoard(fields);
+            var board = new Board(fields);
+            this.mapEntity.SetupBoard(board);
 
             this.ReCreateHexagonEntity();
             this.hexagonEntity.setEnabled(false);
@@ -88,7 +89,7 @@
             base.update();
         }
 
-        private static BoardField[,] GetFieldsFromMap(BoardFieldType[,] mapInfo)
+        public static BoardField[,] GetFieldsFromMap(BoardFieldType[,] mapInfo)
         {
             var fields = new BoardField[mapInfo.GetLength(0), mapInfo.GetLength(1)];
             for (int col = 0; col < mapInfo.GetLength(0); col++)

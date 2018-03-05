@@ -37,6 +37,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Entities\BoardEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\TextEventEntity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Entities\UnitEntity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Networking\GameInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scenes\GameScene\GameScene.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scenes\GameScene\GameSceneUi.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Scenes\MainMenu\MainMenuScene.cs" />

@@ -71,7 +71,7 @@
                 field.TurnEnded();
             }
 
-            this.entity.scene.TurnEnded();
+            //this.entity.scene.TurnEnded();
 
             this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.Players.Count;
             if (this.CurrentPlayer == this.firstPlayerToPlay)
@@ -91,7 +91,7 @@
                 field.TurnStarted();
             }
 
-            this.entity.scene.TurnStarted();
+            //this.entity.scene.TurnStarted();
 
         }
     }

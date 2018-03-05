@@ -1,7 +1,9 @@
 ﻿namespace WarTactics.Shared.Entities
 {
     using System;
+    using System.Collections;
     using System.Collections.Generic;
+    using System.Linq;
 
     using Microsoft.Xna.Framework;
     using Microsoft.Xna.Framework.Graphics;
@@ -9,6 +11,7 @@
     using Nez;
     using Nez.BitmapFonts;
     using Nez.Sprites;
+    using Nez.Tweens;
 
     using WarTactics.Shared.Components;
     using WarTactics.Shared.Components.Units;
@@ -30,10 +33,14 @@
 
         private Board board;
 
+        private ITween<Vector2> moveTween;
+
+        private Queue<Vector2> positionsToMoveTo = new Queue<Vector2>();
+
         public UnitEntity(Unit unit, string name) : base(name)
         {
             this.unit = unit;
-            this.unit.UnitUpdated += (s, e) => { this.Update(e.UnitEvent); };
+            this.unit.UnitUpdated += (s, e) => { this.UpdateUnit(e.UnitEvent); };
         }
 
         public override void onAddedToScene()
@@ -46,7 +53,14 @@
             sprite.layerDepth = 0.8f;
             this.scale = this.board.HexLayout.size / new Vector2(81, 81);
             var field = this.board.FieldFromUnit(this.unit);
-            this.position = this.board.HexPosition(field.Col, field.Row);
+            var finalPosition = this.board.HexPosition(field.Col, field.Row);
+            this.moveTween = this.tweenLocalPositionTo(finalPosition);
+            this.moveTween.stop(true);
+            this.position = finalPosition + new Vector2(0, -500);
+
+            var initialMoveTween = this.tweenLocalPositionTo(finalPosition, 0.5f + Nez.Random.nextFloat(1f));
+            initialMoveTween.setEaseType(EaseType.BounceOut);
+            initialMoveTween.start();
             if (this.unit?.Player != null)
             {
                 sprite.setColor(this.unit.Player.Color);
@@ -69,13 +83,24 @@
             base.onAddedToScene();
         }
 
-        public void Update(UnitEvent unitEvent)
+        public override void update()
+        {
+            if (this.positionsToMoveTo.Count > 0 && !this.moveTween.isRunning())
+            {
+                var v2 = this.positionsToMoveTo.Dequeue();
+                Core.startCoroutine(this.AnimateMovement(v2));
+            }
+
+            base.update();
+        }
+
+        public void UpdateUnit(UnitEvent unitEvent)
         {
             var field = this.board.FieldFromUnit(this.unit);
 
             if (unitEvent.EventType == UnitEventType.Moved && field != null)
             {
-                this.localPosition = this.board.HexPosition(field.Col, field.Row);
+                this.positionsToMoveTo.Enqueue(this.board.HexPosition(field.Col, field.Row));
             }
 
             if (unitEvent.EventType == UnitEventType.TookDamage)
@@ -94,6 +119,14 @@
                 this.getComponent<Sprite>().enabled = false;
                 this.destroy();
             }
+        }
+
+        private IEnumerator AnimateMovement(Vector2 hexPosition)
+        {
+            yield return this.moveTween.waitForCompletion();
+            this.moveTween = this.tweenLocalPositionTo(hexPosition);
+            this.moveTween.setEaseType(EaseType.QuadInOut);
+            this.moveTween.start();
         }
 
         private void UpdateStats()

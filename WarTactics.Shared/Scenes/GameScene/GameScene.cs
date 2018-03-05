@@ -162,16 +162,19 @@
 
         private void ExecuteMove(BoardField sourceField, List<BoardField> route)
         {
-            var targetField = route[route.Count - 1];
-            var unit = sourceField.RemoveUnit();
-            targetField.TakeUnit(unit);
-            var distance = route.Count - 1;
-            unit.Moved(distance);
+            for (int i = 0; i < route.Count - 1; i++)
+            {
+                var unit = route[i].RemoveUnit();
+                var targetField = route[i + 1];
+                targetField.TakeUnit(unit);
+                unit.Moved(1);
+            }
 
+            var finalField = route[route.Count - 1];
             this.selectedField = null;
-            this.BoardHoverLeft(this, new HexCoordsEventArgs(targetField.Coords));
-            this.BoardHoverEntered(this, new HexCoordsEventArgs(targetField.Coords));
-            this.BoardHexagonSelected(this, new HexCoordsEventArgs(targetField.Coords));
+            this.BoardHoverLeft(this, new HexCoordsEventArgs(finalField.Coords));
+            this.BoardHoverEntered(this, new HexCoordsEventArgs(finalField.Coords));
+            this.BoardHexagonSelected(this, new HexCoordsEventArgs(finalField.Coords));
         }
 
         private void ExecuteAttack(BoardField sourceField, BoardField targetField)
@@ -294,9 +297,9 @@
             for (int step = 1; step <= sourceField.Unit.SpeedRemaining; step++)
             {
                 fringes.Add(new List<IntPoint>());
-                var routeSoFar = fieldsWithRoute[step - 1];
                 foreach (var coord in fringes[step - 1])
                 {
+                    var routeSoFar = fieldsWithRoute.First(fwr => fwr[fwr.Count - 1].Coords == coord);
                     for (int dir = 0; dir < 6; dir++)
                     {
                         var neighbor = OffsetCoord.QoffsetFromCube(Board.BoardLayoutType, Hex.Neighbor(OffsetCoord.QoffsetToCube(Board.BoardLayoutType, coord), dir));

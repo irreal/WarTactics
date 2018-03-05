@@ -13,7 +13,7 @@
     using WarTactics.Shared.Components.Units.Events;
 
     [Health(20)]
-    [Speed(2)]
+    [Speed(5)]
     [Attack(20)]
     [Armor(10)]
     [AttackRange(1)]

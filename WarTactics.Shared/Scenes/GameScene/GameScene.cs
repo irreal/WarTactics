@@ -123,9 +123,10 @@
                     if (field.Unit == null)
                     {
                         var moveFields = this.FieldsUnitCanMoveTo(this.selectedField);
-                        if (moveFields.Contains(field))
+                        var route = moveFields.FirstOrDefault(mf => mf.Contains(field));
+                        if (route != null)
                         {
-                            this.ExecuteMove(this.selectedField, field);
+                            this.ExecuteMove(this.selectedField, route);
                         }
                         else
                         {
@@ -159,11 +160,12 @@
             }
         }
 
-        private void ExecuteMove(BoardField sourceField, BoardField targetField)
+        private void ExecuteMove(BoardField sourceField, List<BoardField> route)
         {
+            var targetField = route[route.Count - 1];
             var unit = sourceField.RemoveUnit();
             targetField.TakeUnit(unit);
-            var distance = Hex.Distance(sourceField.Hex, targetField.Hex);
+            var distance = route.Count - 1;
             unit.Moved(distance);
 
             this.selectedField = null;
@@ -218,13 +220,14 @@
             var field = board.Fields[e.Coords.X, e.Coords.Y];
             if (field.Unit != null && field.Unit.Player == gameRound.CurrentPlayer && field.Unit.CanMove)
             {
-                var moveFields = this.FieldsUnitCanMoveTo(field);
-                if (moveFields.Count > 0)
+                var moveFieldsWithRoute = this.FieldsUnitCanMoveTo(field);
+                if (moveFieldsWithRoute.Count > 0)
                 {
                     var hex = boardEntity.HexAtCoords(e.Coords);
                     hex.HighlightColor = new Color(Color.White, 200);
-                    foreach (var targetField in moveFields)
+                    foreach (var targetFieldWithRoute in moveFieldsWithRoute)
                     {
+                        var targetField = targetFieldWithRoute[targetFieldWithRoute.Count - 1];
                         var targetHexagon = boardEntity.HexAtCoords(targetField.Coords);
                         targetHexagon.HighlightColor = new Color(Color.White, 200);
                     }
@@ -275,21 +278,23 @@
             return fields;
         }
 
-        private List<BoardField> FieldsUnitCanMoveTo(BoardField sourceField)
+        private List<List<BoardField>> FieldsUnitCanMoveTo(BoardField sourceField)
         {
             var board = this.findComponentOfType<Board>();
-            List<BoardField> fields = new List<BoardField>();
+            List<List<BoardField>> fieldsWithRoute = new List<List<BoardField>>();
             if (sourceField.Unit == null || !sourceField.Unit.CanMove)
             {
-                return fields;
+                return fieldsWithRoute;
             }
 
             List<IntPoint> visited = new List<IntPoint> { sourceField.Coords };
             List<List<IntPoint>> fringes = new List<List<IntPoint>> { new List<IntPoint> { sourceField.Coords } };
+            fieldsWithRoute.Add(new List<BoardField> { sourceField });
 
             for (int step = 1; step <= sourceField.Unit.SpeedRemaining; step++)
             {
                 fringes.Add(new List<IntPoint>());
+                var routeSoFar = fieldsWithRoute[step - 1];
                 foreach (var coord in fringes[step - 1])
                 {
                     for (int dir = 0; dir < 6; dir++)
@@ -304,6 +309,8 @@
                                 {
                                     visited.Add(neighbor);
                                     fringes[step].Add(neighbor);
+                                    var newRoute = new List<BoardField>(routeSoFar) { curField };
+                                    fieldsWithRoute.Add(newRoute);
                                 }
                             }
                         }
@@ -311,7 +318,7 @@
                 }
             }
 
-            return visited.Select(c => board.Fields[c.X, c.Y]).ToList();
+            return fieldsWithRoute;
         }
     }
 }

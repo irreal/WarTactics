@@ -20,7 +20,7 @@
     /// </summary>
     public class WtGame : Core
     {
-        public WtGame() : base(1280, 768)
+        public WtGame() : base(1280, 768, false)
         {
             Core.defaultSamplerState = SamplerState.LinearClamp;
             Map = GetMap();
